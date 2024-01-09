@@ -126,7 +126,7 @@ export default function App() {
     })
     .catch(err => {
       console.error(err);
-      setMessage(err.response.data.message);
+     // setMessage(err.response.data.message);
     })
     .finally(() => {
       setSpinnerOn(false);
@@ -147,12 +147,12 @@ export default function App() {
           return art.article_id === article_id ? res.data.article : art
         })
       })
-      setMessage('Article updated successfully');
+      setMessage(res.data.articles);
       redirectToArticles();
     })
     .catch(err => {
       console.error(err);
-      setMessage('Failed to update article');
+    //  setMessage(err.response.data.message);
       redirectToArticles();
     })
     .finally(() => {
@@ -171,12 +171,11 @@ export default function App() {
    .then(() => {
      // Remove the deleted article from the articles state
      setArticles(articles.filter(a => a.id !== article_id));
-     setMessage(spinnerOn);
+     setMessage(res.data.article);
      redirectToArticles();
    })
    .catch(err => {
-     console.error(err);
-     setMessage('Failed to delete article');
+   console.error(err);
      redirectToArticles();
    })
    .finally(() => {
