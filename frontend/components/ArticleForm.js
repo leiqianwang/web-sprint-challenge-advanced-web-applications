@@ -58,7 +58,7 @@ export default function ArticleForm(props) {
     // and replace Function.prototype with the correct function
 
     <form id="form" onSubmit={onSubmit}>
-      <h2>{currentArticle ? "Edit" : "Create"}</h2>
+      <h2>{currentArticle ? "Edit Article" : "Create Article"}</h2>
       <input
         maxLength={50}
         onChange={onChange}

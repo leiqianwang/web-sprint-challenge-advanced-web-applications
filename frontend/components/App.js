@@ -22,11 +22,24 @@ export default function App() {
   const [spinnerOn, setSpinnerOn] = useState(false)
 
   // ✨ Research `useNavigate` in React Router v.6
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  // const ProtectedRoute = ({ children }) => {
+  //   const navigate = useNavigate();
+  //   const token = localStorage.getItem('token');
+  
+  //   if (!token) {
+  //     // If no token, redirect to login
+  //     navigate("/");
+  //     return null; // Render nothing while redirecting
+  //   }
+  
+  //   return children; // Render the protected component
+  // };
 
 
   const redirectToLogin = () => { 
-    navigate("/login");
+    navigate("/");
     /* ✨ implement */ }
   const redirectToArticles = () => { 
     navigate("/articles");
@@ -62,12 +75,16 @@ export default function App() {
     axios().post(loginUrl, { username, password })
       .then(res => {
         localStorage.setItem('token', res.data.token);
-        setMessage(spinnerOn);
+        setMessage(res.data.message);
         redirectToArticles();
+        if(!token) {
+          navigate("/");
+        }
       })
       .catch(err => {
         console.error(err);
-        setMessage(err.message);
+        setMessage(err.response.data.message);
+        redirectToLogin();
       })
       .finally(() => {
         setSpinnerOn(false);
@@ -122,10 +139,11 @@ export default function App() {
       })
 
       setMessage(res.data.message);
-      redirectToArticles();
+     // redirectToArticles();
     })
     .catch(err => {
       console.error(err);
+      setMessage(err.response.data.message);
      // setMessage(err.response.data.message);
     })
     .finally(() => {
@@ -147,8 +165,8 @@ export default function App() {
           return art.article_id === article_id ? res.data.article : art
         })
       })
-      setMessage(res.data.articles);
-      redirectToArticles();
+      setMessage(res.data.message);
+    //  redirectToArticles();
     })
     .catch(err => {
       console.error(err);
@@ -168,15 +186,17 @@ export default function App() {
     setSpinnerOn(true);
  
    axios().delete(`${articlesUrl}/${article_id}`)
-   .then(() => {
+   .then((res) => {
      // Remove the deleted article from the articles state
-     setArticles(articles.filter(a => a.id !== article_id));
-     setMessage(res.data.article);
-     redirectToArticles();
+   //  setArticles(articles.filter(a => a.id !== article_id));
+     setArticles(articles.filter(a => a.article_id !== article_id));
+
+     setMessage(res.data.message);
+    // redirectToArticles();
    })
    .catch(err => {
    console.error(err);
-     redirectToArticles();
+     //redirectToArticles();
    })
    .finally(() => {
      setSpinnerOn(false);
@@ -187,7 +207,7 @@ export default function App() {
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <>
       <Spinner on={spinnerOn} />
-      <Message message={message} />
+      <Message message={message} id="message"/>
       <button id="logout" onClick={logout}>Logout from app</button>
       <div id="wrapper" style={{ opacity: spinnerOn ? "0.25" : "1" }}> {/* <-- do not change this line */}
         <h1>Advanced Web Applications</h1>
@@ -198,11 +218,14 @@ export default function App() {
         <Routes>
           <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="articles" element={
+            
+           // <ProtectedRoute>
             <>
               <ArticleForm 
               postArticle={postArticle}
               updateArticle={updateArticle}
-              currentArticle={articles.find(article => article.id === currentArticleId)}
+              currentArticle={articles.find(article => article.article_id === currentArticleId)}
+
               setCurrentArticleId={setCurrentArticleId}
               />
 
@@ -213,6 +236,7 @@ export default function App() {
               setCurrentArticleId={setCurrentArticleId} 
                   />
             </>
+         //   </ProtectedRoute>
           }     />
 
         </Routes>
