@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { NavLink, Routes, Route, useNavigate, Navigate } from 'react-router-dom'
+import { NavLink, Routes, Route, useNavigate, Navigate} from 'react-router-dom'
 import Articles from './Articles'
 import LoginForm from './LoginForm'
 import Message from './Message'
@@ -23,6 +23,7 @@ export default function App() {
 
   // ✨ Research `useNavigate` in React Router v.6
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
   // const ProtectedRoute = ({ children }) => {
   //   const navigate = useNavigate();
@@ -77,9 +78,6 @@ export default function App() {
         localStorage.setItem('token', res.data.token);
         setMessage(res.data.message);
         redirectToArticles();
-        if(!token) {
-          navigate("/");
-        }
       })
       .catch(err => {
         console.error(err);
@@ -219,7 +217,7 @@ export default function App() {
           <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="articles" element={
             
-           // <ProtectedRoute>
+           token ? (
             <>
               <ArticleForm 
               postArticle={postArticle}
@@ -236,8 +234,10 @@ export default function App() {
               setCurrentArticleId={setCurrentArticleId} 
                   />
             </>
-         //   </ProtectedRoute>
-          }     />
+           ) : (
+            <Navigate replace to="/" />
+          )
+     }     />
 
         </Routes>
         <footer>Bloom Institute of Technology 2022</footer>
