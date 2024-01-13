@@ -152,24 +152,29 @@ export default function App() {
   const updateArticle = ({ article_id, article }) => {
     // ✨ implement
     // You got this!
+    // Construct the correct URL with the article_id
+    const updateUrl = `${articlesUrl}/${article_id}`;
     setMessage('');
     setSpinnerOn(true);
+    console.log(`Sending PUT request to: ${articlesUrl}/${article_id}`, article);
+
   
-    axios().put(`${articlesUrl}/${article_id}`, article)
+    axios().put(updateUrl, article)
     .then(res => {
       // Update the articles state to reflect the changes
-      setArticles(articles => {
-        return articles.map(art => {
-          return art.article_id === article_id ? res.data.article : art
-        })
-      })
+      console.log('Update response:', res); // Debugging
+
+     // Update the articles state to reflect the changes
+     setArticles(articles => articles.map(art => 
+      art.article_id === article_id ? res.data.article : art
+    ));
       setMessage(res.data.message);
     //  redirectToArticles();
     })
     .catch(err => {
       console.error(err);
-    //  setMessage(err.response.data.message);
-      redirectToArticles();
+    setMessage(err.response.data.message);
+     // redirectToArticles();
     })
     .finally(() => {
       setSpinnerOn(false);

@@ -37,7 +37,7 @@ export default function ArticleForm(props) {
     // We must submit a new post or update an existing one,
     // depending on the truthyness of the `currentArticle` prop.
     if(currentArticle) {
-      updateArticle({values, article_id: currentArticle.article_id});
+      updateArticle({ article_id: currentArticle.article_id, article: values });
     }else {
        postArticle(values);
     }
